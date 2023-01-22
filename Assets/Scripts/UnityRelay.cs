@@ -10,7 +10,7 @@ using Unity.Services.Relay.Models;
 using UnityEngine;
 using QFSW.QC;
 
-public class TestRelay : MonoBehaviour
+public class UnityRelay : MonoBehaviour
 {
     // Start is called before the first frame update
     private async void Start()
