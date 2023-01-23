@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4298844640172062050}
   - component: {fileID: 223326867163501275}
   - component: {fileID: 4990003804684190954}
-  - component: {fileID: 4631760166902901773}
   m_Layer: 0
   m_Name: sword
   m_TagString: weapon
@@ -99,32 +98,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 8, z: 5}
   m_Center: {x: -0.0000030446847, y: 3.3366404, z: 1.0725718}
---- !u!114 &4631760166902901773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 406765043681318860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
 --- !u!1 &609844271899957686
 GameObject:
   m_ObjectHideFlags: 0

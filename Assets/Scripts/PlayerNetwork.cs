@@ -10,6 +10,11 @@ public class PlayerNetwork : NetworkBehaviour
     private int deaths = 0;
     private int kills = 0;
 
+    private NetworkVariable<int> deathsPlayer0 = new NetworkVariable<int>(0);
+    private NetworkVariable<int> deathsPlayer1 = new NetworkVariable<int>(0);
+    private NetworkVariable<int> deathsPlayer2 = new NetworkVariable<int>(0);
+    private NetworkVariable<int> deathsPlayer3 = new NetworkVariable<int>(0);
+
 
     public override void OnNetworkSpawn()
     {
@@ -46,11 +51,6 @@ public class PlayerNetwork : NetworkBehaviour
 
         Vector3 moveDir = new Vector3(0, 0, 0);
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("Hier sind die Leben:" + lives);
-        }
-
 
         if (Input.GetKey(KeyCode.W)) 
         { 
@@ -72,6 +72,10 @@ public class PlayerNetwork : NetworkBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             anim.SetBool("isAttacking", true);
+            /*if (!anim.GetCurrentAnimatorStateInfo(0).IsName("isAttacking"))
+            {
+                GetComponentInChildren<BoxCollider>().enabled = true;
+            }*/
         }
         else
         {
@@ -86,8 +90,11 @@ public class PlayerNetwork : NetworkBehaviour
         {
             anim.SetBool("isMoving", false);
         }
-
-        //transform.rotation = Quaternion.LookRotation(moveDir);
+        if(moveDir != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(moveDir);
+        }
+        
         float moveSpeed = 9f;
         transform.position += moveDir * moveSpeed * Time.deltaTime;
     }
@@ -98,18 +105,22 @@ public class PlayerNetwork : NetworkBehaviour
         if (other.gameObject.tag == "weapon" && GetComponentInChildren<BoxCollider>() != other)
         {
             lives--;
+            Debug.Log("Hier sind die Leben: " + lives);
             if(lives <= 0)
             {
-                PlayerDies();
                 other.gameObject.GetComponentInParent<CapsuleCollider>().gameObject.GetComponent<PlayerNetwork>().kills++;
                 other.gameObject.GetComponentInParent<CapsuleCollider>().gameObject.GetComponent<PlayerNetwork>().UpdateUIText();
+                PlayerDies();
             }
             Debug.Log("ES KOL MIT SCHWERT");
+
+            //other.enabled = false;
         }
     }
 
     private void PlayerDies()
     {
+        lives = 3;
         switch (OwnerClientId)
         {
             case 0:
@@ -137,8 +148,6 @@ public class PlayerNetwork : NetworkBehaviour
                 NetworkManagerUI.Instance.setTextP4("P4 K:" + kills + " / D:" + deaths);
                 break;
         }
-
-        lives = 3;
     }
 
     public void UpdateUIText()
