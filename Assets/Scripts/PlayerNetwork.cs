@@ -6,7 +6,9 @@ using UnityEngine;
 public class PlayerNetwork : NetworkBehaviour
 {
     private Animator anim;
-    private NetworkVariable<int> lives = new NetworkVariable<int>(3, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private int lives = 3;
+    private int deaths = 0;
+    private int kills = 0;
 
 
     public override void OnNetworkSpawn()
@@ -46,7 +48,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Debug.Log("Hier sind die Leben:" + lives.Value);
+            Debug.Log("Hier sind die Leben:" + lives);
         }
 
 
@@ -90,20 +92,71 @@ public class PlayerNetwork : NetworkBehaviour
         transform.position += moveDir * moveSpeed * Time.deltaTime;
     }
 
-
-    void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!IsOwner)
+
+        if (other.gameObject.tag == "weapon" && GetComponentInChildren<BoxCollider>() != other)
         {
-            return;
+            lives--;
+            if(lives <= 0)
+            {
+                PlayerDies();
+                other.gameObject.GetComponentInParent<CapsuleCollider>().gameObject.GetComponent<PlayerNetwork>().kills++;
+                other.gameObject.GetComponentInParent<CapsuleCollider>().gameObject.GetComponent<PlayerNetwork>().UpdateUIText();
+            }
+            Debug.Log("ES KOL MIT SCHWERT");
+        }
+    }
+
+    private void PlayerDies()
+    {
+        switch (OwnerClientId)
+        {
+            case 0:
+                Debug.Log("First Player/Host dies");
+                transform.position = new Vector3(15, 0.5f, 15);
+                deaths++;
+                NetworkManagerUI.Instance.setTextP1("P1 K:" + kills + " / D:" + deaths);
+                break;
+            case 1:
+                Debug.Log("Second Player dies");
+                transform.position = new Vector3(-15, 0.5f, 15);
+                deaths++;
+                NetworkManagerUI.Instance.setTextP2("P2 K:" + kills + " / D:" + deaths);
+                break;
+            case 2:
+                Debug.Log("Third Player dies");
+                transform.position = new Vector3(15, 0.5f, -15);
+                deaths++;
+                NetworkManagerUI.Instance.setTextP3("P3 K:" + kills + " / D:" + deaths);
+                break;
+            case 3:
+                Debug.Log("Fourth Player dies");
+                transform.position = new Vector3(-15, 0.5f, -15);
+                deaths++;
+                NetworkManagerUI.Instance.setTextP4("P4 K:" + kills + " / D:" + deaths);
+                break;
         }
 
-        Debug.Log("ES KOLLIDIERT!!!!!");
+        lives = 3;
+    }
 
-        if (collision.gameObject.tag == "weapon")
+    public void UpdateUIText()
+    {
+        switch (OwnerClientId)
         {
-            Debug.Log("ES KOL MIT SCHWERT");
-            lives.Value--;
+            case 0:
+                NetworkManagerUI.Instance.setTextP1("P1 K:" + kills + " / D:" + deaths);
+                break;
+            case 1:
+                NetworkManagerUI.Instance.setTextP2("P2 K:" + kills + " / D:" + deaths);
+                break;
+            case 2:
+                NetworkManagerUI.Instance.setTextP3("P3 K:" + kills + " / D:" + deaths);
+                break;
+            case 3:
+                NetworkManagerUI.Instance.setTextP4("P4 K:" + kills + " / D:" + deaths);
+                break;
         }
     }
 }
